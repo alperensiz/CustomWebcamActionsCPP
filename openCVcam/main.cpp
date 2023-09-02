@@ -10,7 +10,7 @@ using namespace std;
 Rect selectedRegion;
 bool isDragging = false;
 
-void onMouse(int event, int x, int y, int flags, void* userdata) {
+void onMouse(int event, int x, int y, int flags, void* userdata) { //dragging mouse and select area
     if (event == EVENT_LBUTTONDOWN) {
         selectedRegion = Rect(x, y, 0, 0);
         isDragging = true;
@@ -33,15 +33,15 @@ void onMouse(int event, int x, int y, int flags, void* userdata) {
 }
 
 int main() {
-    VideoCapture cap(0);
+    VideoCapture cap(0); //video capture img
     Mat img;
 
     namedWindow("Image");
     namedWindow("Zoomed Image");
 
     CascadeClassifier faceCascade;
-    if (!faceCascade.load("Resources/haarcascade_frontalface_default.xml")) {
-        cerr << "Cascade dosyasi yuklenemedi" << endl;
+    if (!faceCascade.load("Resources/haarcascade_frontalface_default.xml")) {  //cascade file path
+        cerr << "Failed to load cascade file" << endl;
         return 1;
     }
 
@@ -54,7 +54,7 @@ int main() {
             rectangle(img, selectedRegion, Scalar(0, 255, 0), 2);
 
             Mat zoomedImage = img(selectedRegion);
-            resize(zoomedImage, zoomedImage, Size(), 2.0, 2.0);
+            resize(zoomedImage, zoomedImage, Size(), 2.0, 2.0);  //zoomed image
 
             imshow("Zoomed Image", zoomedImage);
         }
@@ -66,7 +66,7 @@ int main() {
         vector<Rect> faces;
         faceCascade.detectMultiScale(gray, faces);
 
-        for (const Rect& face : faces) {
+        for (const Rect& face : faces) {  //face text and red square
             rectangle(img, face, Scalar(0, 0, 255), 2);
             putText(img, "Face", Point(face.x + face.width - 50, face.y + 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
         }
