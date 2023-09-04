@@ -40,8 +40,14 @@ int main() {
     namedWindow("Zoomed Image");
 
     CascadeClassifier faceCascade;
-    if (!faceCascade.load("Resources/haarcascade_frontalface_default.xml")) {  //cascade file path
+    if (!faceCascade.load("Resources/haarcascade_frontalface_default.xml")) {  //front face cascade file path
         cerr << "Failed to load cascade file" << endl;
+        return 1;
+    }
+
+    CascadeClassifier smileCascade;
+    if (!smileCascade.load("Resources/haarcascade_smile.xml")) {  //smile cascade file path
+        cerr << "Failed to load smile cascade file" << endl;
         return 1;
     }
 
@@ -69,6 +75,16 @@ int main() {
         for (const Rect& face : faces) {  //face text and red square
             rectangle(img, face, Scalar(0, 0, 255), 2);
             putText(img, "Face", Point(face.x + face.width - 50, face.y + 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
+
+            
+            Mat faceROI = gray(face); //smile detection within detected face region
+            vector<Rect> smiles;
+            smileCascade.detectMultiScale(faceROI, smiles, 1.8, 20, 0, Size(25, 25));
+
+            for (const Rect& smile : smiles) {
+                rectangle(img, Point(face.x + smile.x, face.y + smile.y), Point(face.x + smile.x + smile.width, face.y + smile.y + smile.height), Scalar(0, 255, 0), 2);
+                putText(img, "Smile", Point(face.x + smile.x - 20, face.y + smile.y - 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0), 2);
+            }
         }
 
         imshow("Image", img);
