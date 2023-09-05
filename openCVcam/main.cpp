@@ -10,6 +10,7 @@ using namespace std;
 Rect selectedRegion;
 bool isDragging = false;
 
+
 void onMouse(int event, int x, int y, int flags, void* userdata) { //dragging mouse and select area
     if (event == EVENT_LBUTTONDOWN) {
         selectedRegion = Rect(x, y, 0, 0);
@@ -38,6 +39,9 @@ int main() {
 
     namedWindow("Image");
     namedWindow("Zoomed Image");
+
+    setWindowProperty("Image", WND_PROP_FULLSCREEN, WINDOW_FULLSCREEN);
+    setWindowProperty("Image", WND_PROP_TOPMOST, WINDOW_NORMAL);
 
     CascadeClassifier faceCascade;
     if (!faceCascade.load("Resources/haarcascade_frontalface_default.xml")) {  //front face cascade file path
@@ -76,7 +80,7 @@ int main() {
             rectangle(img, face, Scalar(0, 0, 255), 2);
             putText(img, "Face", Point(face.x + face.width - 50, face.y + 20), FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
 
-            
+
             Mat faceROI = gray(face); //smile detection within detected face region
             vector<Rect> smiles;
             smileCascade.detectMultiScale(faceROI, smiles, 1.8, 20, 0, Size(25, 25));
@@ -87,6 +91,8 @@ int main() {
             }
         }
 
+        //add text to windows
+        putText(img, "Press ESC to exit", Point(10, 30), FONT_HERSHEY_SIMPLEX, 1, Scalar(0, 255, 0), 2);
         imshow("Image", img);
 
         int key = waitKey(1);
